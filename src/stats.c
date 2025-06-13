@@ -5,56 +5,67 @@
 #include <string.h>
 #include <limits.h>
 
-Stats *stats_compute(const Board *b,
-                     const Simulation *sim)
+Stats *stats_compute(const Board *b, const Simulation *sim)
 {
     Stats *st = malloc(sizeof(Stats));
-    size_t wins = 0, total_rolls = 0;
-    size_t shortest = SIZE_MAX, short_idx = SIZE_MAX;
+    if (!st) return NULL;
 
-    /* find avg & shortest */
+    size_t wins        = 0;
+    size_t total_rolls = 0;
+    /* Use (size_t)-1 as “infinite” sentinel in lieu of SIZE_MAX */
+    size_t shortest    = (size_t)-1;
+    size_t short_idx   = (size_t)-1;
+
+    /* 1) Compute average rolls and find the shortest-winning game */
     for (size_t i = 0; i < sim->iterations; ++i) {
         size_t r = sim->results[i].rolls_to_win;
         if (r > 0) {
             wins++;
             total_rolls += r;
             if (r < shortest) {
-                shortest = r;
+                shortest  = r;
                 short_idx = i;
             }
         }
     }
+
     st->avg_rolls = wins
-                   ? (double)total_rolls / wins
-                   : 0.0;
-    st->shortest_rolls = (short_idx<sim->iterations)
-                        ? shortest : 0;
-    if (st->shortest_rolls) {
-        st->shortest_sequence =
-           malloc(shortest * sizeof(size_t));
-        memcpy(st->shortest_sequence,
-               sim->results[short_idx].roll_sequence,
-               shortest * sizeof(size_t));
+        ? (double)total_rolls / wins
+        : 0.0;
+
+    if (short_idx < sim->iterations) {
+        st->shortest_rolls    = shortest;
+        st->shortest_sequence = malloc(shortest * sizeof(size_t));
+        memcpy(
+            st->shortest_sequence,
+            sim->results[short_idx].roll_sequence,
+            shortest * sizeof(size_t)
+        );
     } else {
+        st->shortest_rolls    = 0;
         st->shortest_sequence = NULL;
     }
 
-    /* jump frequencies */
+    /* 2) Count how often each jump (snake/ladder) is traversed */
     st->jump_counts = calloc(b->n_jumps, sizeof(size_t));
     st->total_jumps = 0;
 
     for (size_t i = 0; i < sim->iterations; ++i) {
         size_t pos = 0;
+        size_t len = sim->results[i].rolls_to_win;
         size_t *seq = sim->results[i].roll_sequence;
-        for (size_t j = 0; j < sim->results[i].rolls_to_win; ++j) {
+
+        for (size_t j = 0; j < len; ++j) {
             size_t face = seq[j];
             size_t raw  = pos + face;
-            size_t dest = (raw >= b->size
-                           ? b->size-1 
-                           : raw);
+            /* apply exceed logic */
+            size_t dest = (raw >= b->size)
+                        ? b->size - 1
+                        : raw;
+            /* then any snake/ladder */
             dest = b->mapping[dest];
 
-            /* see if this was a jump */
+            /* check each jump */
             for (size_t k = 0; k < b->n_jumps; ++k) {
                 if (b->jumps[k].start == raw &&
                     b->jumps[k].end   == dest) {
@@ -68,6 +79,7 @@ Stats *stats_compute(const Board *b,
 
     return st;
 }
+
 
 void stats_print(const Stats *st, const Board *b) {
     printf("Average rolls to win: %.2f\n", st->avg_rolls);
