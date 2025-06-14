@@ -62,6 +62,8 @@ The board is defined by a simple text file. Blank lines are allowed. A template 
 - Then each snake needs to be defined using the format *S start end* and must always go down using numbers greater or equal to 1
 
 10 10
+
+|Type  | Start | End |
 |------|-------|-----|
 | L    | 1     | 38  |
 | L    | 4     | 14  |
