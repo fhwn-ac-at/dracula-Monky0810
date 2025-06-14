@@ -41,15 +41,15 @@ In the terminal write `./pfusch -c <board_file>` to do a standard simulation run
 
 There are optional flags which can be added to the standard command which are listed below:
 
-|flag|description|default|
-|-d|number of die faces|6|
-|-p|comma-separated  face probabilities (must supply exactly -d values) |uniform|
-|-i|number of games to simulate|10000|
-|-s|max rolls per game before abort|10000|
-|-e|win by exceeding last square|on|
-|-x|must land exactly on last square|off|
-|-S|RNG seed|time(null)|
-
+| Flag | Description                                                          | Default    |
+| ---- | -------------------------------------------------------------------- | ---------- |
+| `-d` | Number of die faces                                                  | 6          |
+| `-p` | Comma-separated face probabilities (must supply exactly `-d` values) | uniform    |
+| `-i` | Number of games to simulate                                          | 10000      |
+| `-s` | Max rolls per game before abort                                      | 10000      |
+| `-e` | Win by exceeding last square                                         | on         |
+| `-x` | Must land exactly on last square                                     | off        |
+| `-S` | RNG seed                                                             | time(null) |
 
 ---
 
@@ -63,26 +63,26 @@ The board is defined by a simple text file. Blank lines are allowed. A template 
 
 10 10
 
-L 1  38
-L 4  14
-L 9  31
-L 21 42
-L 28 84
-L 36 44
-L 51 67
-L 71 91
-L 80 100
+| L    | 1     | 38  |
+| L    | 4     | 14  |
+| L    | 9     | 31  |
+| L    | 21    | 42  |
+| L    | 28    | 84  |
+| L    | 36    | 44  |
+| L    | 51    | 67  |
+| L    | 71    | 91  |
+| L    | 80    | 100 |
+| S    | 16    | 6   |
+| S    | 47    | 26  |
+| S    | 49    | 11  |
+| S    | 56    | 53  |
+| S    | 62    | 19  |
+| S    | 64    | 60  |
+| S    | 87    | 24  |
+| S    | 93    | 73  |
+| S    | 95    | 75  |
+| S    | 98    | 78  |
 
-S 16 6
-S 47 26
-S 49 11
-S 56 53
-S 62 19
-S 64 60
-S 87 24
-S 93 73
-S 95 75
-S 98 78
 
 ---
 
