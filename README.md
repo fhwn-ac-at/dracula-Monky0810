@@ -58,8 +58,8 @@ There are optional flags which can be added to the standard command which are li
 The board is defined by a simple text file. Blank lines are allowed. A template for writing your own board is shown below. If the template shown in the *README.md* is not sufficient enough there are five pre configured `board.txt` files which can be looked at to inspire a custom board. These five boards can also be used for the simulation.  
 
 - The first line for the board conifg file must be two integers to define the board size
-- Then each ladder needs to be defined using the format *L start end* and must always go up using numbers greater or equal to 1
-- Then each snake needs to be defined using the format *S start end* and must always go down using numbers greater or equal to 1
+- Then each ladder needs to be defined using the format *L start end* and must always go up using numbers greater or equal to 1 but smaller than the highest number of the board (10x10 -> smaller than 100)
+- Then each snake needs to be defined using the format *S start end* and must always go down using numbers greater or equal to 1 but always smaller than the highest number of the board(10x10 -> smaller than 100)
 
 *Board size*
 10 10
