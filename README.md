@@ -55,7 +55,7 @@ There are optional flags which can be added to the standard command which are li
 
 ## Board config file
 
-The board is defined by a simple text file. Blank lines are allowed. A template for writing your own board is shown below.
+The board is defined by a simple text file. Blank lines are allowed. A template for writing your own board is shown below. If the template shown in the *README.md* is not sufficient enough there are five pre configured `board.txt` files which can be looked at to inspire a custom board. These five boards can also be used for the simulation.  
 
 - The first line for the board conifg file must be two integers to define the board size
 - Then each ladder needs to be defined using the format *L start end* and must always go up using numbers greater or equal to 1
