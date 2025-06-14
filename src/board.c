@@ -3,6 +3,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*
+ * board_load:
+ *   Load a game board from a file.
+ *   The file format is:
+ *     N M           (board dimensions: N rows, M columns)
+ *     t s e         (zero or more jumps, where t is ignored, s=start index, e=end index)
+ *   Returns a pointer to a newly allocated Board, or NULL on any error.
+ *   - Reads N and M, allocates the Board struct.
+ *   - Reads all jumps (snakes/laders), storing them in b->jumps.
+ *   - Builds a mapping array so that mapping[i] gives the destination after applying any jump at i.
+ *   - Allocates empty adjacency arrays (to be filled by board_build_graph later).
+ */
 Board *board_load(const char *filename) {
     FILE *f = fopen(filename, "r");
     if (!f) return NULL;
@@ -53,6 +65,16 @@ Board *board_load(const char *filename) {
     return b;
 }
 
+/*
+ * board_build_graph:
+ *   Build the game graph for a loaded Board.
+ *   Each square i gets exactly die_sides outgoing edges, one for each possible die roll [1..die_sides].
+ *   - If moving i+roll goes beyond the last square:
+ *       * if win_by_exceed is true, clamp to the last square (winning square)
+ *       * otherwise, stay on i (no move)
+ *   - After computing the raw destination, apply any snake/ladder jump via b->mapping.
+ *   Allocates b->adj[i] arrays of length die_sides and fills them with final destinations.
+ */
 void board_build_graph(Board *b,
                        size_t die_sides,
                        int win_by_exceed)
@@ -82,6 +104,14 @@ void board_build_graph(Board *b,
     }
 }
 
+/*
+ * board_free:
+ *   Free all memory associated with a Board.
+ *   Safely handles a NULL pointer.
+ *   - Frees the jumps array and mapping array.
+ *   - Frees each adjacency list, then the adj and adj_cnt arrays.
+ *   - Finally frees the Board struct itself.
+ */
 void board_free(Board *b) {
     if (!b) return;
     free(b->jumps);

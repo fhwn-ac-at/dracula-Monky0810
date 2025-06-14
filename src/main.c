@@ -7,6 +7,18 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+/*
+ * main:
+ *   Entry point for the board game simulation program.
+ *   - Parses command-line options into a CLIOptions struct.
+ *   - Seeds the RNG.
+ *   - Loads the board configuration and builds its graph.
+ *   - Creates a Die (with optional weighted faces).
+ *   - Runs the specified number of simulations, each up to a maximum number of steps.
+ *   - Computes statistics over all simulations and prints the results.
+ *   - Cleans up all allocated resources before exiting.
+ *   Returns 0 on success, or 1 if any step fails.
+ */
 int main(int argc, char **argv) {
     CLIOptions opts;
     parse_cli(argc, argv, &opts);

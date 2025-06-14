@@ -6,7 +6,11 @@
 #include <time.h>
 
 /*
- * A simple replacement for strdup() using only ISO-C
+ * iso_strdup:
+ *   Duplicate a C string using ISO C memory allocation.
+ *   - Allocates len = strlen(s) + 1 bytes.
+ *   - Copies the contents of s (including the terminating '\0') into the new buffer.
+ *   - Returns a pointer to the newly allocated string, or NULL on allocation failure.
  */
 static char *iso_strdup(const char *s) {
     size_t len = strlen(s) + 1;
@@ -18,21 +22,25 @@ static char *iso_strdup(const char *s) {
 }
 
 /*
- * Parse command-line options into opts.
- * Supports:
- *   -c <file>       board config file (required)
- *   -d <sides>      die sides (default 6)
- *   -p <p1,p2,…>    comma-separated die probs (must match sides)
- *   -i <iters>      number of simulations (default 10000)
- *   -s <steps>      max steps per game (default 10000)
- *   -e              win by exceeding last square (default on)
- *   -x              win only by exact roll
- *   -S <seed>       RNG seed (default = time(NULL))
+ * parse_cli:
+ *   Parse command-line arguments into a CLIOptions struct.
+ *   Supported options:
+ *     -c <file>       Path to the board configuration file (required).
+ *     -d <sides>      Number of die sides (default: 6).
+ *     -p <p1,p2,…>    Comma-separated probabilities for each die face (must match die_sides).
+ *     -i <iters>      Number of simulations to run (default: 10000).
+ *     -s <steps>      Maximum steps allowed per game (default: 10000).
+ *     -e              Enable “win by exceeding” the last square (default: on).
+ *     -x              Require exact roll to land on the last square (disables win-by-exceed).
+ *     -S <seed>       Seed for the random number generator (default: time(NULL)).
  *
- * Exits with error message if something is invalid or missing.
+ *   Behavior:
+ *     - Sets all fields of opts to their defaults.
+ *     - Iterates through argv[], handling each supported flag.
+ *     - On invalid usage or missing required options, prints usage or error and exits.
  */
 void parse_cli(int argc, char **argv, CLIOptions *opts) {
-    /* set defaults */
+    /* Set defaults */
     opts->config_file   = NULL;
     opts->die_sides     = 6;
     opts->die_probs     = NULL;
@@ -41,6 +49,7 @@ void parse_cli(int argc, char **argv, CLIOptions *opts) {
     opts->win_by_exceed = 1;
     opts->seed          = (unsigned)time(NULL);
 
+    /* Parse each argument */
     for (int i = 1; i < argc; ++i) {
         if (strcmp(argv[i], "-c") == 0 && i+1 < argc) {
             opts->config_file = iso_strdup(argv[++i]);
@@ -49,7 +58,7 @@ void parse_cli(int argc, char **argv, CLIOptions *opts) {
             opts->die_sides = (size_t)atoi(argv[++i]);
         }
         else if (strcmp(argv[i], "-p") == 0 && i+1 < argc) {
-            /* parse comma-separated probabilities */
+            /* Parse comma-separated die probabilities */
             char *list = iso_strdup(argv[++i]);
             size_t n = opts->die_sides;
             opts->die_probs = malloc(n * sizeof(double));
@@ -95,6 +104,7 @@ void parse_cli(int argc, char **argv, CLIOptions *opts) {
         }
     }
 
+    /* Ensure required config file was provided */
     if (!opts->config_file) {
         fprintf(stderr, "Error: board config file required (-c)\n");
         exit(1);
