@@ -61,7 +61,10 @@ The board is defined by a simple text file. Blank lines are allowed. A template 
 - Then each ladder needs to be defined using the format *L start end* and must always go up using numbers greater or equal to 1
 - Then each snake needs to be defined using the format *S start end* and must always go down using numbers greater or equal to 1
 
+*Board size*
 10 10
+
+*Snakes and Ladders configuration*
 
 |Type  | Start | End |
 |------|-------|-----|
